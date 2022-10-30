@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:login_signup_auth/core/snack_bar.dart';
+import 'package:login_signup_auth/models/post.dart';
 
 class AddPostView extends StatelessWidget {
   AddPostView({Key? key}) : super(key: key);
@@ -46,15 +47,12 @@ class AddPostView extends StatelessWidget {
               ElevatedButton(
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
+                      Post post = Post.create(body: bodyController.text);
+
                       await FirebaseFirestore.instance
                           .collection("posts")
                           .doc()
-                          .set({
-                        'comments': 0,
-                        'likes': 0,
-                        'created_at': FieldValue.serverTimestamp(),
-                        'body': bodyController.text
-                      });
+                          .set(post.toJson());
                       Navigator.pop(context);
                       appSnackBar(
                           context, "Your Post Have Been Created Successfully!");

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login_signup_auth/models/post.dart';
 import 'package:login_signup_auth/views/home/add_post.dart';
 import '../../auth/login_screen.dart';
 import '../../core/app_navigator.dart';
@@ -31,6 +32,8 @@ class HomeScreen extends StatelessWidget {
               return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
+                    Post post = Post.fromJson(snapshot.data!.docs[index]);
+
                     return Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: Material(
@@ -40,20 +43,14 @@ class HomeScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                snapshot.data!.docs[index].data()['body'],
-                              ),
+                              Text(post.body),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
-                                      Text(
-                                        snapshot.data!.docs[index]
-                                            .data()['likes']
-                                            .toString(),
-                                      ),
+                                      Text(post.likes.toString()),
                                       SizedBox(
                                         width: 5,
                                       ),
@@ -68,11 +65,7 @@ class HomeScreen extends StatelessWidget {
                                       )
                                     ],
                                   ),
-                                  Text(
-                                    snapshot.data!.docs[index]
-                                        .data()['comments']
-                                        .toString(),
-                                  ),
+                                  Text("${post.comments} Comments"),
                                 ],
                               )
                             ],
