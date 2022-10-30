@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login_signup_auth/views/home/add_post.dart';
 import '../../auth/login_screen.dart';
+import '../../core/app_navigator.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -9,63 +11,89 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Home"),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  logout(context);
-                },
-                icon: const Icon(Icons.logout))
-          ],
-        ),
-        body: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-            future: FirebaseFirestore.instance.collection("posts").get(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return ListView.builder(
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Material(
-                          color: Colors.white,
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  snapshot.data!.docs[index].data()['body'],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      snapshot.data!.docs[index]
-                                          .data()['likes']
-                                          .toString(),
-                                    ),
-                                    Text(
-                                      snapshot.data!.docs[index]
-                                          .data()['comments']
-                                          .toString(),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
+      appBar: AppBar(
+        title: const Text("Home"),
+        actions: [
+          IconButton(
+              onPressed: () {
+                logout(context);
+              },
+              icon: const Icon(Icons.logout))
+        ],
+      ),
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          stream: FirebaseFirestore.instance
+              .collection("posts")
+              .orderBy('created_at', descending: true)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Material(
+                        color: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                snapshot.data!.docs[index].data()['body'],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        snapshot.data!.docs[index]
+                                            .data()['likes']
+                                            .toString(),
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.thumb_up_alt),
+                                        onPressed: () {
+                                          snapshot.data!.docs[index].reference
+                                              .update({
+                                            'likes': FieldValue.increment(1)
+                                          });
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                  Text(
+                                    snapshot.data!.docs[index]
+                                        .data()['comments']
+                                        .toString(),
+                                  ),
+                                ],
+                              )
+                            ],
                           ),
                         ),
-                      );
-                    });
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }));
+                      ),
+                    );
+                  });
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          appNavPush(context, AddPostView());
+        },
+        child: Icon(Icons.add),
+      ),
+    );
   }
 
   Future<void> logout(BuildContext context) async {
