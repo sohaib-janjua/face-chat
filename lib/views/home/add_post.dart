@@ -1,6 +1,7 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:login_signup_auth/core/snack_bar.dart';
@@ -20,6 +21,15 @@ class _AddPostViewState extends State<AddPostView> {
 
   File? image;
 
+  void selectImage(ImageSource source) async {
+    var picker = ImagePicker();
+    XFile? pickedImage = await picker.pickImage(source: source);
+    if (pickedImage != null) {
+      image = File(pickedImage.path);
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,24 +42,30 @@ class _AddPostViewState extends State<AddPostView> {
           key: formKey,
           child: Column(
             children: [
-              GestureDetector(
-                onTap: () async {
-                  var picker = ImagePicker();
-                  XFile? pickedImage =
-                      await picker.pickImage(source: ImageSource.gallery);
-                  if (pickedImage != null) {
-                    image = File(pickedImage.path);
-                    setState(() {});
-                  }
-                },
-                child: Container(
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(color: Colors.grey.shade200),
-                  child: image == null
-                      ? Center(child: Text("Select Image"))
-                      : Image.file(image!),
-                ),
+              Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(color: Colors.grey.shade200),
+                child: image == null
+                    ? Center(child: Text("Select Image"))
+                    : Image.file(image!),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      selectImage(ImageSource.gallery);
+                    },
+                    icon: Icon(Icons.image),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      selectImage(ImageSource.camera);
+                    },
+                    icon: Icon(Icons.camera),
+                  )
+                ],
               ),
               SizedBox(
                 height: 10,
@@ -77,7 +93,30 @@ class _AddPostViewState extends State<AddPostView> {
               ElevatedButton(
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      Post post = Post.create(body: bodyController.text);
+                      //Image must be selected
+                      //Firebase Storage(create a new file)
+                      //Data Upload
+                      //When Upload done
+                      //Get the public link
+
+                      if (image == null) {
+                        appSnackBar(context, "Please Select Image");
+                        return;
+                      }
+                      String ext = image!.path.split(".").last;
+                      String path =
+                          "${DateTime.now().microsecondsSinceEpoch}_${FirebaseAuth.instance.currentUser!.uid}.$ext";
+
+                      Reference ref =
+                          FirebaseStorage.instance.ref().child(path);
+                      UploadTask task = ref.putFile(image!);
+                      await task.whenComplete(() => null);
+                      String link = await ref.getDownloadURL();
+
+                      Post post = Post.create(
+                        body: bodyController.text,
+                        image: link,
+                      );
 
                       await FirebaseFirestore.instance
                           .collection("posts")
