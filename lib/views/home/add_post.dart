@@ -1,16 +1,24 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:login_signup_auth/core/snack_bar.dart';
 import 'package:login_signup_auth/models/post.dart';
 
-class AddPostView extends StatelessWidget {
+class AddPostView extends StatefulWidget {
   AddPostView({Key? key}) : super(key: key);
 
+  @override
+  State<AddPostView> createState() => _AddPostViewState();
+}
+
+class _AddPostViewState extends State<AddPostView> {
   final formKey = GlobalKey<FormState>();
+
   final bodyController = TextEditingController();
+
+  File? image;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +32,28 @@ class AddPostView extends StatelessWidget {
           key: formKey,
           child: Column(
             children: [
+              GestureDetector(
+                onTap: () async {
+                  var picker = ImagePicker();
+                  XFile? pickedImage =
+                      await picker.pickImage(source: ImageSource.gallery);
+                  if (pickedImage != null) {
+                    image = File(pickedImage.path);
+                    setState(() {});
+                  }
+                },
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(color: Colors.grey.shade200),
+                  child: image == null
+                      ? Center(child: Text("Select Image"))
+                      : Image.file(image!),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
               TextFormField(
                 controller: bodyController,
                 decoration: InputDecoration(
