@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 
 class Post {
   final String? id;
+  final String userId;
   final String body;
   final int comments;
   final int likes;
@@ -12,6 +12,7 @@ class Post {
   Post({
     this.id,
     required this.body,
+    required this.userId,
     required this.comments,
     required this.likes,
     required this.createdAt,
@@ -21,9 +22,11 @@ class Post {
   factory Post.create({
     required body,
     String? image,
+    required String userId,
   }) {
     return Post(
       body: body,
+      userId: userId,
       comments: 0,
       likes: 0,
       createdAt: DateTime.now(),
@@ -34,6 +37,7 @@ class Post {
   factory Post.fromJson(QueryDocumentSnapshot<Map<String, dynamic>> snapshot) {
     return Post(
       id: snapshot.id,
+      userId: snapshot.data()['user_id'],
       body: snapshot.data()['body'],
       comments: snapshot.data()['comments'],
       likes: snapshot.data()['likes'],
@@ -47,6 +51,7 @@ class Post {
   Map<String, dynamic> toJson() {
     return {
       'body': body,
+      'user_id': userId,
       'comments': comments,
       'likes': likes,
       'created_at': FieldValue.serverTimestamp(),

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:login_signup_auth/core/functions.dart';
 import 'package:login_signup_auth/core/snack_bar.dart';
 import 'package:login_signup_auth/models/post.dart';
 
@@ -80,7 +81,7 @@ class _AddPostViewState extends State<AddPostView> {
                 maxLines: 5,
                 validator: (String? v) {
                   if (v == null || v.isEmpty) {
-                    return "Please nter Something!";
+                    return "Please enter Something!";
                   } else if (v.length < 5) {
                     return "Please enter atleast 5 characters";
                   }
@@ -103,18 +104,11 @@ class _AddPostViewState extends State<AddPostView> {
                         appSnackBar(context, "Please Select Image");
                         return;
                       }
-                      String ext = image!.path.split(".").last;
-                      String path =
-                          "${DateTime.now().microsecondsSinceEpoch}_${FirebaseAuth.instance.currentUser!.uid}.$ext";
-
-                      Reference ref =
-                          FirebaseStorage.instance.ref().child(path);
-                      UploadTask task = ref.putFile(image!);
-                      await task.whenComplete(() => null);
-                      String link = await ref.getDownloadURL();
+                      String link = await appUploadImage(image!);
 
                       Post post = Post.create(
                         body: bodyController.text,
+                        userId: FirebaseAuth.instance.currentUser!.uid,
                         image: link,
                       );
 
