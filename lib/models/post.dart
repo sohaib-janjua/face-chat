@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Post {
   final String? id;
   final String userId;
   final String body;
   final int comments;
-  final int likes;
+  final List<String> likes;
   final DateTime createdAt;
   String? image;
 
@@ -28,7 +29,7 @@ class Post {
       body: body,
       userId: userId,
       comments: 0,
-      likes: 0,
+      likes: [],
       createdAt: DateTime.now(),
       image: image,
     );
@@ -40,7 +41,7 @@ class Post {
       userId: snapshot.data()['user_id'],
       body: snapshot.data()['body'],
       comments: snapshot.data()['comments'],
-      likes: snapshot.data()['likes'],
+      likes: List.from(snapshot.data()['likes']),
       createdAt: snapshot.data()['created_at'] == null
           ? DateTime.now()
           : snapshot.data()['created_at'].toDate(),
@@ -58,4 +59,6 @@ class Post {
       'image': image,
     };
   }
+
+  bool get isLiked => likes.contains(FirebaseAuth.instance.currentUser!.uid);
 }
