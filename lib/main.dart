@@ -1,12 +1,17 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:login_signup_auth/views/home/home_screen.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:login_signup_auth/views/splash/splash_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  if (Platform.isAndroid) {
+    AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
+  }
   runApp(const MyApp());
 }
 
@@ -30,7 +35,7 @@ class MyApp extends StatelessWidget {
               vertical: 18,
             )),
       ),
-      home: SplashView(),
+      home: const SplashView(),
     );
   }
 }

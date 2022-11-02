@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:login_signup_auth/core/functions.dart';
@@ -9,7 +8,7 @@ import 'package:login_signup_auth/core/snack_bar.dart';
 import 'package:login_signup_auth/models/post.dart';
 
 class AddPostView extends StatefulWidget {
-  AddPostView({Key? key}) : super(key: key);
+  const AddPostView({Key? key}) : super(key: key);
 
   @override
   State<AddPostView> createState() => _AddPostViewState();
@@ -48,7 +47,7 @@ class _AddPostViewState extends State<AddPostView> {
                 height: 200,
                 decoration: BoxDecoration(color: Colors.grey.shade200),
                 child: image == null
-                    ? Center(child: Text("Select Image"))
+                    ? const Center(child: Text("Select Image"))
                     : Image.file(image!),
               ),
               Row(
@@ -58,17 +57,17 @@ class _AddPostViewState extends State<AddPostView> {
                     onPressed: () {
                       selectImage(ImageSource.gallery);
                     },
-                    icon: Icon(Icons.image),
+                    icon: const Icon(Icons.image),
                   ),
                   IconButton(
                     onPressed: () {
                       selectImage(ImageSource.camera);
                     },
-                    icon: Icon(Icons.camera),
+                    icon: const Icon(Icons.camera),
                   )
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               TextFormField(

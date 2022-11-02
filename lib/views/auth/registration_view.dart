@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +50,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                     height: 200,
                     decoration: BoxDecoration(color: Colors.grey.shade200),
                     child: image == null
-                        ? Center(child: Text("Select Image"))
+                        ? const Center(child: Text("Select Image"))
                         : Image.file(image!),
                   ),
                   Row(
@@ -61,13 +60,13 @@ class _RegistrationViewState extends State<RegistrationView> {
                         onPressed: () {
                           selectImage(ImageSource.gallery);
                         },
-                        icon: Icon(Icons.image),
+                        icon: const Icon(Icons.image),
                       ),
                       IconButton(
                         onPressed: () {
                           selectImage(ImageSource.camera);
                         },
-                        icon: Icon(Icons.camera),
+                        icon: const Icon(Icons.camera),
                       )
                     ],
                   ),
@@ -142,12 +141,12 @@ class _RegistrationViewState extends State<RegistrationView> {
                 visible: isBusy,
                 child: Center(
                   child: Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.all(20),
+                    decoration: const BoxDecoration(
                       color: Colors.yellow,
                       shape: BoxShape.circle,
                     ),
-                    child: CircularProgressIndicator(),
+                    child: const CircularProgressIndicator(),
                   ),
                 ),
               )

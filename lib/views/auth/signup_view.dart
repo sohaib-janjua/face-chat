@@ -99,7 +99,7 @@ class _SignupViewState extends State<SignupView> {
                         setState(() {
                           isBusy = false;
                         });
-                        print(e.code);
+
                         if (e.code == 'email-already-in-use') {
                           appSnackBar(context, e.message!);
                         }
@@ -113,12 +113,12 @@ class _SignupViewState extends State<SignupView> {
                 visible: isBusy,
                 child: Center(
                   child: Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.all(20),
+                    decoration: const BoxDecoration(
                       color: Colors.yellow,
                       shape: BoxShape.circle,
                     ),
-                    child: CircularProgressIndicator(),
+                    child: const CircularProgressIndicator(),
                   ),
                 ),
               )
