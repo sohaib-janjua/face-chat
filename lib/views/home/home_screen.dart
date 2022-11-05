@@ -6,6 +6,7 @@ import 'package:login_signup_auth/views/auth/login_screen.dart';
 import 'package:login_signup_auth/views/home/add_post.dart';
 import 'package:login_signup_auth/views/home/map_tab.dart';
 import 'package:login_signup_auth/views/home/post_tab.dart';
+import 'package:login_signup_auth/views/inbox/inbox_view.dart';
 import '../../core/app_navigator.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -35,10 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: IndexedStack(
         index: pageIndex,
-        children: [
-          PostTab(),
-          MapTab(),
-        ],
+        children: [PostTab(), const MapTab(), InboxView()],
       ),
       floatingActionButton: pageIndex == 0
           ? FloatingActionButton(
@@ -67,6 +65,12 @@ class _HomeScreenState extends State<HomeScreen> {
               Icons.map,
             ),
             label: "Map",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.chat,
+            ),
+            label: "Inbox",
           ),
         ],
       ),
