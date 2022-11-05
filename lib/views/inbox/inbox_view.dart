@@ -46,8 +46,12 @@ class InboxView extends StatelessWidget {
                       subtitle: Text(
                           snapshot.data!.docs[index].data()['last_message']),
                       onTap: () {
-                        appNavPush(context,
-                            ChatView(chatId: snapshot.data!.docs[index].id));
+                        appNavPush(
+                            context,
+                            ChatView(
+                              chatId: snapshot.data!.docs[index].id,
+                              userId: userId,
+                            ));
                       },
                     );
                   } else if (userSnapshot.hasError) {

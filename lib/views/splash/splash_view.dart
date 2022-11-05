@@ -19,7 +19,7 @@ class _SplashViewState extends State<SplashView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       if (FirebaseAuth.instance.currentUser == null) {
-        appNavPopAndPush(context, const LoginScreen());
+        appNavPopAndPush(context, LoginScreen());
       } else {
         String userId = FirebaseAuth.instance.currentUser!.uid;
         var doc = await FirebaseFirestore.instance

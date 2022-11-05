@@ -1,13 +1,13 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:login_signup_auth/models/message.dart';
+import 'package:http/http.dart' as http;
 
 class ChatView extends StatelessWidget {
-  ChatView({super.key, required this.chatId});
+  ChatView({super.key, required this.chatId, required this.userId});
 
   final String chatId;
 
@@ -15,6 +15,8 @@ class ChatView extends StatelessWidget {
   final msgTextController = TextEditingController();
 
   final authId = FirebaseAuth.instance.currentUser!.uid;
+
+  final String userId;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,6 +120,29 @@ class ChatView extends StatelessWidget {
                     "last_message": msgTextController.text,
                     "last_message_time": FieldValue.serverTimestamp(),
                   });
+
+                  String? token;
+                  var user = await FirebaseFirestore.instance
+                      .doc("users/$userId")
+                      .get();
+                  if (user.exists) {
+                    token = user.data()!['fcm_token'];
+                  }
+                  if (token != null) {
+                    http.post(
+                        Uri.parse('https://api.rnfirebase.io/messaging/send'),
+                        headers: {
+                          'Content-Type': 'application/json; charset=UTF-8',
+                        },
+                        body: jsonEncode({
+                          'token': token,
+                          'data': {'screen': 'chat', 'user': authId},
+                          'notification': {
+                            'title': 'New Message',
+                            'body': msgTextController.text,
+                          },
+                        }));
+                  }
 
                   msgTextController.clear();
                 },

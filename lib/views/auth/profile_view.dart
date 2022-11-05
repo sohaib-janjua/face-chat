@@ -54,6 +54,7 @@ class ProfileView extends StatelessWidget {
                     context,
                     ChatView(
                       chatId: chatId,
+                      userId: uid,
                     ));
               },
               child: Text('Chat'))

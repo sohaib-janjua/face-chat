@@ -1,7 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:login_signup_auth/views/auth/login_screen.dart';
 import 'package:login_signup_auth/views/home/add_post.dart';
 import 'package:login_signup_auth/views/home/map_tab.dart';
@@ -20,6 +20,28 @@ class _HomeScreenState extends State<HomeScreen> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
   int pageIndex = 0;
+
+  @override
+  void initState() {
+    FirebaseMessaging.instance.getToken().then((token) {
+      FirebaseFirestore.instance.doc("users/$uid").update({
+        'fcm_token': token,
+      });
+    });
+
+    super.initState();
+    FirebaseMessaging.onMessage.listen((msg) {
+      String title = msg.notification!.title!;
+      String body = msg.notification!.body!;
+      print("ONMESSAGE $title,$body,${msg.data.toString()}");
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((msg) {
+      String title = msg.notification!.title!;
+      String body = msg.notification!.body!;
+      print("ONMESSAGEOPENEDAPP $title,$body,${msg.data.toString()}");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
