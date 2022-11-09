@@ -7,6 +7,7 @@ import 'package:login_signup_auth/views/auth/login_screen.dart';
 import 'package:login_signup_auth/views/home/add_post.dart';
 import 'package:login_signup_auth/views/home/map_tab.dart';
 import 'package:login_signup_auth/views/home/post_tab.dart';
+import 'package:login_signup_auth/views/home/video_room_tab.dart';
 import 'package:login_signup_auth/views/inbox/inbox_view.dart';
 import '../../core/app_navigator.dart';
 
@@ -61,6 +62,12 @@ class _HomeScreenState extends State<HomeScreen> {
       iOS: iosLNInit,
     ));
 
+    FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
     FirebaseMessaging.instance.getToken().then((token) {
       FirebaseFirestore.instance.doc("users/$uid").update({
         'fcm_token': token,
@@ -102,7 +109,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: IndexedStack(
         index: pageIndex,
-        children: [PostTab(), const MapTab(), InboxView()],
+        children: [
+          PostTab(), const MapTab(), InboxView(),
+          //  VideoRoomTab()
+        ],
       ),
       floatingActionButton: pageIndex == 0
           ? FloatingActionButton(
@@ -114,30 +124,17 @@ class _HomeScreenState extends State<HomeScreen> {
           : SizedBox.shrink(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: pageIndex,
+        type: BottomNavigationBarType.fixed,
         onTap: (int newIndex) {
           setState(() {
             pageIndex = newIndex;
           });
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-            ),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.map,
-            ),
-            label: "Map",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.chat,
-            ),
-            label: "Inbox",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: "Map"),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Inbox"),
+          BottomNavigationBarItem(icon: Icon(Icons.group), label: "Rooms"),
         ],
       ),
     );
